@@ -40,7 +40,7 @@ You can train IL using demonstrations. We set `rollout_length` to 2000 for `Inve
 python train_imitation.py \
     --algo gail --cuda --env_id InvertedPendulum-v2 \
     --buffer buffers/InvertedPendulum-v2/size1000000_std0.01_prand0.0.pth \
-    --num_steps 100000 --eval_interval 5000 --rollout_length 2000 --seed 0
+    --num_steps 100000 --eval_interval 5000 --rollout_length 2000 --seed 0 --algo 'sac'
 ```
 
 <img src="https://user-images.githubusercontent.com/37267851/91002942-dec90980-e60a-11ea-9bb4-3b5c308bc388.png" title="InvertedPendulum-v2" width=400> <img src="https://user-images.githubusercontent.com/37267851/91002939-dd97dc80-e60a-11ea-940f-6d340306582c.png" title="Hopper-v3" width=400>
