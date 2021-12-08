@@ -89,6 +89,8 @@ class PPO(Algorithm):
         t += 1
 
         action, log_pi = self.explore(state)
+        print(action)
+        print(action.shape)
         next_state, reward, done, _ = env.step(action)
 
         mask = False if t == env._max_episode_steps else done

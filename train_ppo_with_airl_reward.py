@@ -7,15 +7,10 @@ from gail_airl_ppo.env import make_env
 from gail_airl_ppo.algo import PPO
 from gail_airl_ppo.trainer import Trainer
 
-#from gail_airl_ppo.envs.env_utils import CustomGymEnv
-
 
 def run(args):
     env = make_env(args.env_id)
     env_test = make_env(args.env_id)
-
-    #env = CustomGymEnv('DisabledAnt-v0', record_video=False, record_log=False)
-    #env_test = CustomGymEnv('DisabledAnt-v0', record_video=False, record_log=False)
 
     airl_disc_path = args.airl_disc_path if args.airl_disc_path else None
     algo = PPO(
