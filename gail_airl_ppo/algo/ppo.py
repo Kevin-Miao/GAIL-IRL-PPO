@@ -92,6 +92,7 @@ class PPO(Algorithm):
         action, log_pi = self.explore(state)
         
         if self.ant_disabled:
+            print("Disabling two legs...")
             action[:4] = 0
             
         next_state, reward, done, _ = env.step(action)
