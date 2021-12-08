@@ -5,6 +5,14 @@ from torch.utils.tensorboard import SummaryWriter
 from gym.wrappers import Monitor
 
 # Video Stuff
+
+import gym
+import imageio
+import numpy as np
+import base64
+import IPython
+import PIL.Image
+import pyvirtualdisplay
 from pathlib import Path
 from IPython import display as ipythondisplay
 
