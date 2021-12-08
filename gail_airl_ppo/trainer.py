@@ -106,7 +106,7 @@ class Trainer:
         os.environ['DISPLAY'] = ':1'
             
         if not os.path.exists(video_folder):
-            os.makedir(video_folder)
+            os.mkdir(video_folder)
             
         eval_env = DummyVecEnv([lambda: gym.make(self.env_id)])
         
