@@ -31,7 +31,8 @@ def run(args):
         num_steps=args.num_steps,
         eval_interval=args.eval_interval,
         seed=args.seed,
-        video=args.video
+        video=args.video,
+        env_id=args.env_id,
     )
     trainer.train()
 

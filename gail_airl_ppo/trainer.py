@@ -4,12 +4,18 @@ from datetime import timedelta
 from torch.utils.tensorboard import SummaryWriter
 from gym.wrappers import Monitor
 
+# Video Stuff
+from pathlib import Path
+from IPython import display as ipythondisplay
 
+from stable_baselines.common.policies import MlpPolicy
+from stable_baselines.common.vec_env import VecVideoRecorder, SubprocVecEnv, DummyVecEnv
+from stable_baselines import PPO2
 
 class Trainer:
 
     def __init__(self, env, env_test, algo, log_dir, seed=0, num_steps=10**5,
-                 eval_interval=10**3, num_eval_episodes=5, video=False):
+                 eval_interval=10**3, num_eval_episodes=5, video=False, env_id=None):
         super().__init__()
 
         # Env to collect samples.
@@ -19,6 +25,7 @@ class Trainer:
         # Env for evaluation.
         self.env_test = env_test
         self.env_test.seed(2**31-seed)
+        self.env_id = env_id
 
         self.video = video
         if video:
@@ -61,14 +68,15 @@ class Trainer:
                 self.algo.save_models(
                     os.path.join(self.model_dir, f'step{step}'))
 
+        self.record_video()
+
         # Wait for the logging to be finished.
         sleep(10)
 
     def evaluate(self, step):
         mean_return = 0.0
 
-        render = (step == self.num_steps)
-        env = self.env_test_video if render else self.env_test
+        env = self.env_test
             
         for i in range(self.num_eval_episodes):
             state = env.reset()
@@ -77,8 +85,6 @@ class Trainer:
 
             while (not done):
                 action = self.algo.exploit(state)
-                if render:
-                    env.render()
                 state, reward, done, _ = env.step(action)
                 episode_return += reward
 
@@ -88,6 +94,34 @@ class Trainer:
         print(f'Num steps: {step:<6}   '
               f'Return: {mean_return:<5.1f}   '
               f'Time: {self.time}')
+
+    # Record video
+    def record_video(video_length=500, prefix='', video_folder='videos/'):
+        """
+        :param video_length: (int)
+        :param prefix: (str)
+        :param video_folder: (str)
+        """
+        os.system("Xvfb :1 -screen 0 1024x768x24 &")
+        os.environ['DISPLAY'] = ':1'
+            
+        if not os.path.exists(video_folder):
+            os.makedir(video_folder)
+            
+        eval_env = DummyVecEnv([lambda: gym.make(self.env_id)])
+        
+        # Start the video at step=0 and record 500 steps
+        eval_env = VecVideoRecorder(env, video_folder=video_folder,
+                                    record_video_trigger=lambda step: step == 0, video_length=video_length,
+                                    name_prefix=prefix)
+
+        obs = eval_env.reset()
+        for _ in range(video_length):
+            action, _ = self.algo.exploit((obs)
+            obs, _, _, _ = eval_env.step(action)
+
+        # Close the video recorder
+        eval_env.close()
 
     @property
     def time(self):
