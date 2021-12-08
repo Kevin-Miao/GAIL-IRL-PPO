@@ -67,10 +67,9 @@ class Trainer:
     def evaluate(self, step):
         mean_return = 0.0
 
-        env = self.env_test
-        if step == self.num_steps:
-            env = self.env_test_video
-
+        render = (step == self.num_steps)
+        env = self.env_test_video if render else self.env_test
+            
         for i in range(self.num_eval_episodes):
             state = env.reset()
             episode_return = 0.0
@@ -78,6 +77,8 @@ class Trainer:
 
             while (not done):
                 action = self.algo.exploit(state)
+                if render:
+                    env.render()
                 state, reward, done, _ = env.step(action)
                 episode_return += reward
 
