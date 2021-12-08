@@ -12,11 +12,13 @@ def run(args):
     env = make_env(args.env_id)
     env_test = make_env(args.env_id)
 
+    airl_disc_path = args.airl_disc_path if args.airl_disc_path else None
     algo = PPO(
         state_shape=env.observation_space.shape,
         action_shape=env.action_space.shape,
         device=torch.device("cuda" if args.cuda else "cpu"),
-        seed=args.seed
+        seed=args.seed,
+        airl_disc_path=airl_disc_path
     )
 
     time = datetime.now().strftime("%Y%m%d-%H%M")
@@ -44,5 +46,6 @@ if __name__ == '__main__':
     p.add_argument('--cuda', action='store_true')
     p.add_argument('--seed', type=int, default=0)
     p.add_argument('--video', action='store_true')
+    p.add_argument('--airl_disc_path', type=str, default="")
     args = p.parse_args()
     run(args)
