@@ -1,7 +1,7 @@
 import numpy as np
 from gym import utils
 from gym.envs.mujoco import mujoco_env
-from inverse_rl.envs.dynamic_mjc.model_builder import MJCModel
+from gail_airl_ppo.envs.dynamic_mjc.model_builder import MJCModel
 from rllab.misc import logger
 
 
