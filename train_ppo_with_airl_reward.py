@@ -30,7 +30,8 @@ def run(args):
         log_dir=log_dir,
         num_steps=args.num_steps,
         eval_interval=args.eval_interval,
-        seed=args.seed
+        seed=args.seed,
+        video=args.video
     )
     trainer.train()
 
@@ -42,5 +43,6 @@ if __name__ == '__main__':
     p.add_argument('--env_id', type=str, default='Hopper-v3')
     p.add_argument('--cuda', action='store_true')
     p.add_argument('--seed', type=int, default=0)
+    p.add_argument('--video', action='store_true')
     args = p.parse_args()
     run(args)

@@ -17,11 +17,12 @@ class Trainer:
         self.env.seed(seed)
 
         # Env for evaluation.
-        if video:
-            self.env_test = Monitor(env_test, './video', force=True)
-        else:
-            self.env_test = env_test
+        self.env_test = env_test
         self.env_test.seed(2**31-seed)
+
+        self.video = video
+        if video:
+            self.env_test_video = Monitor(env_test, './video', force=True)
 
         self.algo = algo
         self.log_dir = log_dir
@@ -66,14 +67,18 @@ class Trainer:
     def evaluate(self, step):
         mean_return = 0.0
 
+        env = self.env_test
+        if step == self.num_steps:
+            env = self.env_test_video
+
         for i in range(self.num_eval_episodes):
-            state = self.env_test.reset()
+            state = env.reset()
             episode_return = 0.0
             done = False
 
             while (not done):
                 action = self.algo.exploit(state)
-                state, reward, done, _ = self.env_test.step(action)
+                state, reward, done, _ = env.step(action)
                 episode_return += reward
 
             mean_return += episode_return / self.num_eval_episodes

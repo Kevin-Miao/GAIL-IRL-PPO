@@ -4,7 +4,7 @@ from torch.optim import Adam
 
 from .base import Algorithm
 from gail_airl_ppo.utils import soft_update, disable_gradient
-
+from gail_airl_ppo.network import AIRLDiscrim
 from gail_airl_ppo.buffer import RolloutBuffer
 from gail_airl_ppo.network import StateIndependentPolicy, StateFunction
 
@@ -29,8 +29,22 @@ class PPO(Algorithm):
                  rollout_length=2048, mix_buffer=20, lr_actor=3e-4,
                  lr_critic=3e-4, units_actor=(64, 64), units_critic=(64, 64),
                  epoch_ppo=10, clip_eps=0.2, lambd=0.97, coef_ent=0.0,
-                 max_grad_norm=10.0):
+                 max_grad_norm=10.0, airl_disc_path=None):
         super().__init__(state_shape, action_shape, device, seed, gamma)
+
+        self.airl_disc_path = airl_disc_path
+        if self.airl_disc_path:
+            self.airl_disc = AIRLDiscrim(
+                state_shape=state_shape,
+                gamma=gamma,
+                hidden_units_r=units_disc_r,
+                hidden_units_v=units_disc_v,
+                hidden_activation_r=nn.ReLU(inplace=True),
+                hidden_activation_v=nn.ReLU(inplace=True)
+            ).to(device)
+            
+            self.airl_disc.load_state_dict(torch.load(self.airl_disc_path))
+            self.airl_disc.eval()
 
         # Rollout buffer.
         self.buffer = RolloutBuffer(
