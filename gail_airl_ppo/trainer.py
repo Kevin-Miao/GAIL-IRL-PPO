@@ -2,12 +2,14 @@ import os
 from time import time, sleep
 from datetime import timedelta
 from torch.utils.tensorboard import SummaryWriter
+from gym.wrappers import Monitor
+
 
 
 class Trainer:
 
     def __init__(self, env, env_test, algo, log_dir, seed=0, num_steps=10**5,
-                 eval_interval=10**3, num_eval_episodes=5):
+                 eval_interval=10**3, num_eval_episodes=5, video=False):
         super().__init__()
 
         # Env to collect samples.
@@ -15,7 +17,10 @@ class Trainer:
         self.env.seed(seed)
 
         # Env for evaluation.
-        self.env_test = env_test
+        if video:
+            self.env_test = Monitor(env_test, './video', force=True)
+        else:
+            self.env_test = env_test
         self.env_test.seed(2**31-seed)
 
         self.algo = algo
@@ -61,7 +66,7 @@ class Trainer:
     def evaluate(self, step):
         mean_return = 0.0
 
-        for _ in range(self.num_eval_episodes):
+        for i in range(self.num_eval_episodes):
             state = self.env_test.reset()
             episode_return = 0.0
             done = False
