@@ -12,7 +12,6 @@ def run(args):
     env = make_env(args.env_id)
     env_test = make_env(args.env_id)
 
-    airl_disc_path = args.airl_disc_path if args.airl_disc_path else None
     algo = PPO(
         state_shape=env.observation_space.shape,
         action_shape=env.action_space.shape,
