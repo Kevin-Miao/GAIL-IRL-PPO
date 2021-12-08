@@ -117,7 +117,7 @@ class Trainer:
 
         obs = eval_env.reset()
         for _ in range(video_length):
-            action, _ = self.algo.exploit((obs)
+            action, _ = self.algo.exploit(obs)
             obs, _, _, _ = eval_env.step(action)
 
         # Close the video recorder
