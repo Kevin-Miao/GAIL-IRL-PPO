@@ -37,8 +37,8 @@ class PPO(Algorithm):
             self.airl_disc = AIRLDiscrim(
                 state_shape=state_shape,
                 gamma=gamma,
-                hidden_units_r=units_disc_r,
-                hidden_units_v=units_disc_v,
+                hidden_units_r=(100, 100),
+                hidden_units_v=(100, 100),
                 hidden_activation_r=nn.ReLU(inplace=True),
                 hidden_activation_v=nn.ReLU(inplace=True)
             ).to(device)
