@@ -90,6 +90,7 @@ class PPO(Algorithm):
 
         action, log_pi = self.explore(state)
         next_state, reward, done, _ = env.step(action)
+
         mask = False if t == env._max_episode_steps else done
 
         self.buffer.append(state, action, reward, mask, log_pi, next_state)
@@ -105,6 +106,11 @@ class PPO(Algorithm):
         
         states, actions, rewards, dones, log_pis, next_states = \
             self.buffer.get()
+
+        if self.airl_disc_path:
+            print("Recalculating rewards")
+            rewards = self.airl_disc.calculate_reward(states, dones, log_pis, next_states)
+            
         self.update_ppo(
             states, actions, rewards, dones, log_pis, next_states, writer)
 
