@@ -18,7 +18,8 @@ def run(args):
         action_shape=env.action_space.shape,
         device=torch.device("cuda" if args.cuda else "cpu"),
         seed=args.seed,
-        airl_disc_path=airl_disc_path
+        airl_disc_path=airl_disc_path,
+        ant_disabled=args.ant_disabled,
     )
 
     time = datetime.now().strftime("%Y%m%d-%H%M")
@@ -47,5 +48,6 @@ if __name__ == '__main__':
     p.add_argument('--seed', type=int, default=0)
     p.add_argument('--video', action='store_true')
     p.add_argument('--airl_disc_path', type=str, default="")
+    p.add_argument('--ant_disabled', action='store_true')
     args = p.parse_args()
     run(args)

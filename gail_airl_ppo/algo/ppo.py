@@ -29,7 +29,7 @@ class PPO(Algorithm):
                  rollout_length=2048, mix_buffer=20, lr_actor=3e-4,
                  lr_critic=3e-4, units_actor=(64, 64), units_critic=(64, 64),
                  epoch_ppo=10, clip_eps=0.2, lambd=0.97, coef_ent=0.0,
-                 max_grad_norm=10.0, airl_disc_path=None):
+                 max_grad_norm=10.0, airl_disc_path=None, ant_disabled=False):
         super().__init__(state_shape, action_shape, device, seed, gamma)
 
         self.airl_disc_path = airl_disc_path
@@ -46,6 +46,7 @@ class PPO(Algorithm):
             
             self.airl_disc.load_state_dict(torch.load(self.airl_disc_path))
             self.airl_disc.eval()
+        self.ant_disabled = ant_disabled
 
         # Rollout buffer.
         self.buffer = RolloutBuffer(
@@ -89,8 +90,10 @@ class PPO(Algorithm):
         t += 1
 
         action, log_pi = self.explore(state)
-        print(action)
-        print(action.shape)
+        
+        if self.ant_disabled:
+            action[:4] = 0
+            
         next_state, reward, done, _ = env.step(action)
 
         mask = False if t == env._max_episode_steps else done
