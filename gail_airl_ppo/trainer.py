@@ -127,7 +127,7 @@ class Trainer:
         done=False
         for _ in range(video_length):
             action  = self.algo.exploit(obs)
-            obs, _, done = eval_env.step(action)
+            obs, _, done, _ = eval_env.step(action)
             if done:
                 break
 
