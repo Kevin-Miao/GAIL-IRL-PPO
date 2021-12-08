@@ -48,6 +48,9 @@ class PPO(Algorithm):
             self.airl_disc.eval()
         self.ant_disabled = ant_disabled
 
+        print(f"Ant disabled legs: {self.ant_disabled}")
+        print(f"Using AIRL discriminator as reward: {bool(self.airl_disc_path)}")
+
         # Rollout buffer.
         self.buffer = RolloutBuffer(
             buffer_size=rollout_length,
