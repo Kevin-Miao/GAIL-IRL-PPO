@@ -7,7 +7,7 @@ from gail_airl_ppo.env import make_env
 from gail_airl_ppo.algo import PPO
 from gail_airl_ppo.trainer import Trainer
 
-from gail_airl_ppo.envs.env_utils import CustomGymEnv
+#from gail_airl_ppo.envs.env_utils import CustomGymEnv
 
 
 def run(args):
