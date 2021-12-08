@@ -108,7 +108,6 @@ class PPO(Algorithm):
             self.buffer.get()
 
         if self.airl_disc_path:
-            print("Recalculating rewards")
             rewards = self.airl_disc.calculate_reward(states, dones, log_pis, next_states)
             
         self.update_ppo(
