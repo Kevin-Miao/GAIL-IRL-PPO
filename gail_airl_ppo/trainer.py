@@ -104,7 +104,7 @@ class Trainer:
               f'Time: {self.time}')
 
     # Record video
-    def record_video(video_length=500, prefix='', video_folder='videos/'):
+    def record_video(self, video_length=500, prefix='', video_folder='videos/'):
         """
         :param video_length: (int)
         :param prefix: (str)
@@ -115,9 +115,8 @@ class Trainer:
             
         if not os.path.exists(video_folder):
             os.mkdir(video_folder)
-
-        env_id = self.env_id
-        eval_env = DummyVecEnv([lambda: gym.make(env_id)])
+            
+        eval_env = DummyVecEnv([lambda: gym.make(self.env_id)])
         
         # Start the video at step=0 and record 500 steps
         eval_env = VecVideoRecorder(env, video_folder=video_folder,
