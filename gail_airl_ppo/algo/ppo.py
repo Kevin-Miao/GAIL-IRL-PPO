@@ -34,6 +34,7 @@ class PPO(Algorithm):
 
         self.airl_disc_path = airl_disc_path
         if self.airl_disc_path:
+            print("Using AIRL disciminator to fix the reward!")
             self.airl_disc = AIRLDiscrim(
                 state_shape=state_shape,
                 gamma=gamma,
@@ -101,6 +102,7 @@ class PPO(Algorithm):
 
     def update(self, writer):
         self.learning_steps += 1
+        
         states, actions, rewards, dones, log_pis, next_states = \
             self.buffer.get()
         self.update_ppo(
