@@ -4,7 +4,7 @@ import torch.nn.functional as F
 from torch.optim import Adam
 
 from .ppo import PPO
-from gail_airl_ppo.network import AIRLDiscrimCNN
+from gail_airl_ppo.network import AIRLDiscrimCNN, AIRLDiscrimCNNwithAtt
 
 lr_actor = 3e-4
 lr_critic = 3e-4
@@ -17,7 +17,7 @@ class AIRL(PPO):
                  units_actor=64, units_critic=64,
                  units_disc_r=100, units_disc_v=100,
                  epoch_ppo=50, epoch_disc=10, clip_eps=0.2, lambd=0.97,
-                 coef_ent=0.0, max_grad_norm=10.0):
+                 coef_ent=0.0, max_grad_norm=10.0, ssl=False):
         super().__init__(
             state_shape, action_shape, device, seed, gamma, rollout_length,
             mix_buffer, lr_actor, lr_critic, units_actor, units_critic,
@@ -28,14 +28,26 @@ class AIRL(PPO):
         self.buffer_exp = buffer_exp
 
         # Discriminator.
-        self.disc = AIRLDiscrimCNN(
-            state_shape=state_shape,
-            gamma=gamma,
-            hidden_units_r=units_disc_r,
-            hidden_units_v=units_disc_v,
-            hidden_activation_r=nn.ReLU(inplace=True),
-            hidden_activation_v=nn.ReLU(inplace=True)
-        ).to(device)
+        if ssl:
+            print('att')
+            self.disc = AIRLDiscrimCNNwithAtt(
+                state_shape=state_shape,
+                gamma=gamma,
+                hidden_units_r=units_disc_r,
+                hidden_units_v=units_disc_v,
+                hidden_activation_r=nn.ReLU(inplace=True),
+                hidden_activation_v=nn.ReLU(inplace=True)
+            ).to(device)
+        else:
+            print('no att')
+            self.disc = AIRLDiscrimCNN(
+                state_shape=state_shape,
+                gamma=gamma,
+                hidden_units_r=units_disc_r,
+                hidden_units_v=units_disc_v,
+                hidden_activation_r=nn.ReLU(inplace=True),
+                hidden_activation_v=nn.ReLU(inplace=True)
+            ).to(device)
 
         self.learning_steps_disc = 0
         self.optim_disc = Adam(self.disc.parameters(), lr=lr_disc)

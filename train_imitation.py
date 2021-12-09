@@ -42,13 +42,18 @@ def run(args):
         action_shape= env.action_space.n if args.discrete else action_space[0],
         device=torch.device("cuda" if args.cuda else "cpu"),
         seed=args.seed,
-        rollout_length=args.rollout_length
+        rollout_length=args.rollout_length,
+        ssl = args.ssl
     )
 
     time = datetime.now().strftime("%Y%m%d-%H%M")
-    log_dir = os.path.join(
-        'logs', args.env_id, args.algo, f'seed{args.seed}-{time}')
-
+    if args.log_dir == '':
+        log_dir = os.path.join(
+            'logs', args.env_id, args.algo, f'seed{args.seed}-{time}')
+    else:
+        log_dir = os.path.join(
+            'logs', args.env_id, args.algo, args.log_dir, f'seed{args.seed}-{time}')
+        
     trainer = Trainer(
         env=env,
         env_test=env_test,
@@ -74,5 +79,6 @@ if __name__ == '__main__':
     p.add_argument('--seed', type=int, default=0)
     p.add_argument('--ssl', action='store_true')
     p.add_argument('--prior', action='store_true')
+    p.add_argument('--log_dir', type=str, default='')
     args = p.parse_args()
     run(args)

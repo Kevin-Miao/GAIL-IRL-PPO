@@ -2,7 +2,7 @@ import torch
 from torch import nn
 import torch.nn.functional as F
 
-from .utils import build_mlp, build_cnn
+from .utils import build_mlp, build_cnn, build_att_cnn
 
 
 class GAILDiscrim(nn.Module):
@@ -105,3 +105,46 @@ class AIRLDiscrimCNN(nn.Module):
         with torch.no_grad():
             logits = self.forward(states, dones, log_pis, next_states)
             return -F.logsigmoid(-logits)        
+
+class AIRLDiscrimCNNwithAtt(nn.Module):
+
+    def __init__(self, state_shape, gamma,
+                 hidden_units_r=64,
+                 hidden_units_v=64,
+                 hidden_activation_r=nn.ReLU(inplace=True),
+                 hidden_activation_v=nn.ReLU(inplace=True),
+                actions = 4):
+        super().__init__()
+
+        self.g = build_att_cnn(
+            input_channels=4,
+            output_dim=1,
+            hidden_units=64,
+            hidden_activation=hidden_activation_r
+        )
+        self.h = build_att_cnn(
+            input_channels=4,
+            output_dim=1,
+            hidden_units=64,
+            hidden_activation=hidden_activation_v
+        )
+
+        self.gamma = gamma
+        self.attg = None
+        self.atth = None
+        self.attnh = None
+
+    def f(self, states, dones, next_states):
+        rs, self.attg = self.g(states)
+        vs, self.atth = self.h(states)
+        next_vs, self.attnh = self.h(next_states)
+        return rs + self.gamma * (1 - dones) * next_vs - vs
+
+    def forward(self, states, dones, log_pis, next_states):
+        # Discriminator's output is sigmoid(f - log_pi).
+        return self.f(states, dones, next_states) - log_pis
+
+    def calculate_reward(self, states, dones, log_pis, next_states):
+        with torch.no_grad():
+            logits = self.forward(states, dones, log_pis, next_states)
+            return -F.logsigmoid(-logits)    
