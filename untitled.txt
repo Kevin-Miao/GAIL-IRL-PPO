@@ -1,0 +1,4 @@
+python train_imitation.py \
+    --algo airl --cuda --env_id BreakoutNoFrameskip-v4 \
+    --buffer size200_std0.0_prand0.0.pth \
+    --num_steps 100000 --eval_interval 5000 --rollout_length 2000 --seed 0 --discrete

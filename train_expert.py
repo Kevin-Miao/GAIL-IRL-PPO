@@ -6,11 +6,15 @@ import torch
 from gail_airl_ppo.env import make_env
 from gail_airl_ppo.algo import SAC
 from gail_airl_ppo.trainer import Trainer
-
+import gym
+import ale_py
 
 def run(args):
-    env = make_env(args.env_id)
-    env_test = make_env(args.env_id)
+    if not args.atari:
+        env = make_env(args.env_id)
+        env_test = make_env(args.env_id)
+    else:
+        env = gym.make(args.env_id)
 
     algo = SAC(
         state_shape=env.observation_space.shape,
@@ -42,5 +46,6 @@ if __name__ == '__main__':
     p.add_argument('--env_id', type=str, default='Hopper-v3')
     p.add_argument('--cuda', action='store_true')
     p.add_argument('--seed', type=int, default=0)
+    p.add_argument('--atari', type=bool, default=False)
     args = p.parse_args()
     run(args)
