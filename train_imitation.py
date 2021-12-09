@@ -72,5 +72,7 @@ if __name__ == '__main__':
     p.add_argument('--cuda', action='store_true')
     p.add_argument('--discrete', action='store_true')
     p.add_argument('--seed', type=int, default=0)
+    p.add_argument('--ssl', action='store_true')
+    p.add_argument('--prior', action='store_true')
     args = p.parse_args()
     run(args)

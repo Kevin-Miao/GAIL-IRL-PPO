@@ -79,7 +79,7 @@ class Trainer:
                 state, reward, done, _ = self.env_test.step(action)
                 episode_return += reward
 
-            mean_return += episode_return / self.num_eval_episodes
+            mean_return += episode_return
         self.writer.add_scalar('return/test', mean_return, step)
         print(f'Num steps: {step:<6}   '
               f'Return: {mean_return[0]:<5.1f}   '

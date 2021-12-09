@@ -6,12 +6,14 @@ from torch.optim import Adam
 from .ppo import PPO
 from gail_airl_ppo.network import AIRLDiscrimCNN
 
-
+lr_actor = 3e-4
+lr_critic = 3e-4
+lr_disc = 3e-4
 class AIRL(PPO):
 
     def __init__(self, buffer_exp, state_shape, action_shape, device, seed,
                  gamma=0.995, rollout_length=10000, mix_buffer=1,
-                 batch_size=64, lr_actor=3e-4, lr_critic=3e-4, lr_disc=3e-4,
+                 batch_size=32, lr_actor=lr_actor, lr_critic=lr_critic, lr_disc=lr_disc,
                  units_actor=64, units_critic=64,
                  units_disc_r=100, units_disc_v=100,
                  epoch_ppo=50, epoch_disc=10, clip_eps=0.2, lambd=0.97,
@@ -107,4 +109,4 @@ class AIRL(PPO):
             writer.add_scalar('stats/acc_exp', acc_exp, self.learning_steps)
 
     def save_reward(self, path):
-        torc
+        torch.save(self.disc, path)
